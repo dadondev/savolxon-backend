@@ -33,7 +33,7 @@ app.use(helmet({}));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(fileUpload());
-app.use("/api/teacher/tests", testRoute);
+app.use("/api/teacher/tests", authMiddleware, testRoute);
 app.use("/api/results", authMiddleware, resultRoute);
 app.use("/api/student/test", enterRoutes);
 app.use("/api/auth/student", authMiddleware, studentRoutes);

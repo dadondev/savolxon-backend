@@ -6,7 +6,9 @@ import resultService from "../services/result.service";
 class resultController {
 	async getAll(req: Request, res: Response) {
 		try {
-			const datas = await resultService.getAll();
+			const { teacher } = req.query;
+			if (!teacher) throw new Error("Malumotlarni olishda muammo!");
+			const datas = await resultService.getAll(teacher as string);
 			return res.json(datas);
 		} catch (error) {
 			return res.status(400).json({
@@ -17,7 +19,9 @@ class resultController {
 	async getOne(req: Request, res: Response) {
 		try {
 			const { id } = req.params;
-			const datas = await resultService.getOne(id);
+			const { teacher } = req.query;
+			if (!teacher) throw new Error("Malumotlarni olishda muammo!");
+			const datas = await resultService.getOne(id, teacher as string);
 			return res.json(datas);
 		} catch (error) {
 			return res.status(400).json({
@@ -28,7 +32,9 @@ class resultController {
 	async delete(req: Request, res: Response) {
 		try {
 			const { id } = req.params;
-			const datas = await resultService.delete(id);
+			const { teacher } = req.query;
+			if (!teacher) throw new Error("Malumotlarni olishda muammo!");
+			const datas = await resultService.delete(id, teacher as string);
 			return res.json(datas);
 		} catch (error) {
 			return res.status(400).json({
