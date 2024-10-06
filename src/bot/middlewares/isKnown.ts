@@ -67,7 +67,7 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 			existUser.role = text === "👨🏻‍🏫 O'qituvchi" ? "teacher" : "student";
 			existUser.action = "role";
 			await existUser.save();
-			saveToApp(existUser as tmeUserValidationI);
+			await saveToApp(existUser as tmeUserValidationI);
 			return ctx.reply(
 				"✅ Muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!\n\n/start buyrug'ini bosing!",
 				{
