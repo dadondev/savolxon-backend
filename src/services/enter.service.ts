@@ -24,8 +24,11 @@ class enterService {
 			const isKnown = test.members.find(
 				(mbr) => mbr.studentId.toString() === student._id.toString()
 			);
+			if (student.joined_tests.find((e) => e === test._id.toString()))
+				throw new Error("Siz allaqachon kirgansiz!");
 			if (isKnown && isKnown.status && isKnown.status === "finished")
 				throw new Error("Siz allaqachon");
+
 			return new enterDto(test);
 		} catch (error) {
 			throw error;
@@ -44,7 +47,7 @@ class enterService {
 			});
 			const test = await testModel.findById(comparedResult.testId);
 
-			student?.joined_tests.push(result._id as any);
+			student?.joined_tests.push(result._id.toString());
 			if (!test) throw new Error("Test topilmadi");
 			const newMbr = {
 				phoneNumber: student?.phoneNumber,
