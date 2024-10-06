@@ -34,6 +34,8 @@ export const checkMembership = async (
 		}
 		await next();
 	} catch (error) {
+		console.log(error);
+
 		return ctx.reply(
 			"Xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring."
 		);
