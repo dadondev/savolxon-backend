@@ -2,6 +2,7 @@
 
 import resultDto from "../dtos/result.dto";
 import resultModel from "../models/result.model";
+import teacherModel from "../models/teacher.model";
 import testModel from "../models/test.model";
 
 class resultService {
@@ -37,7 +38,8 @@ class resultService {
 			if (!result) throw new Error("Natija topilmadi");
 			const test = await testModel.findById(result.testId);
 			if (!test) throw new Error("Cannot get");
-			if (test.teacher_id.toString() !== teacher) throw new Error("Cannot get");
+			const teacher = await teacherModel.findById(test.teacher_id);
+			if (!teacher) throw new Error("Cannot get");
 			await resultModel.findByIdAndDelete(id);
 			return new resultDto(result);
 		} catch (error) {
