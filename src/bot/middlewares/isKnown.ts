@@ -4,6 +4,7 @@ import { Context } from "telegraf";
 import tmeModel from "../../models/tme.model";
 import bcrypt from "bcryptjs";
 import saveToApp from "../functions/saveToApp";
+import { tmeUserValidationI } from "../types/types";
 
 export async function isKnown(ctx: Context, next: () => Promise<void>) {
 	const text = ctx.text;
@@ -66,12 +67,15 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 			existUser.role = text === "👨🏻‍🏫 O'qituvchi" ? "teacher" : "student";
 			existUser.action = "role";
 			await existUser.save();
-			saveToApp(existUser as any);
-			return ctx.reply("✅ Muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!\n\n/start buyrug'ini bosing!", {
-				reply_markup: {
-					remove_keyboard: true,
-				},
-			});
+			saveToApp(existUser as tmeUserValidationI);
+			return ctx.reply(
+				"✅ Muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!\n\n/start buyrug'ini bosing!",
+				{
+					reply_markup: {
+						remove_keyboard: true,
+					},
+				}
+			);
 		default:
 			break;
 	}
