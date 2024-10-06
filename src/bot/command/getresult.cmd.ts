@@ -36,20 +36,28 @@ export async function handleCode(ctx: Context, next: () => Promise<void>) {
 			.sort((a, b) => a.wrongs - b.wrongs);
 
 		if (resultsList.length === 0)
-			return ctx.reply("Natijalar hozircha mavjud emas!");
+			return await ctx.reply("Natijalar hozircha mavjud emas!");
 
-		const rating = resultsList
-			.map(async (e, i) => {
-				const student = await studentModel.findById(e.userId);
-				if (!student) return "";
+		let rating: string[] = [""];
 
-				return `\n${i + 1}. ${student.lastName} ${student.firstName} ✅ ${
-					e.corrects
-				} ❌ ${e.wrongs}`;
-			})
-			.join("");
-		return ctx.reply(`Quyidagi test bo'yicha natijalar!\n${rating}`);
+		for (const result in resultsList) {
+			const student = await studentModel.findById(resultsList[result].userId);
+			if (!student) return;
+			const text = `${+result + 1}. ${student.lastName} ${
+				student.firstName
+			} ✅ ${resultsList[result].corrects} ❌ ${resultsList[result].wrongs}`;
+			rating = [...rating, text];
+		}
+
+		return await ctx.reply(
+			`Quyidagi test bo'yicha natijalar!\n` +
+				rating.join("\n") +
+				"]\n\nHozircha shular!"
+		);
 	} catch (error) {
-		return ctx.reply("❌ Test topilmadi!");
+		return await ctx.reply("❌ Test topilmadi!");
+	} finally {
+		user.action = "start";
+		await user.save();
 	}
 }
