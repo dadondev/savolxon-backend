@@ -21,10 +21,11 @@ class enterService {
 			if (!test) throw new Error("Test mavjud emas!");
 			if (test.status !== "active") throw new Error("Testga kira olmaysiz!");
 			if (!student) throw new Error("Student mavjud emas!");
-			const isKnown = test.members.find((mbr) => mbr.studentId === student._id);
+			const isKnown = test.members.find(
+				(mbr) => mbr.studentId.toString() === student._id.toString()
+			);
 			if (isKnown && isKnown.status && isKnown.status === "finished")
 				throw new Error("Siz allaqachon");
-
 			return new enterDto(test);
 		} catch (error) {
 			throw error;
