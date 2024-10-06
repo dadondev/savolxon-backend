@@ -18,16 +18,20 @@ class enterService {
 				throw new Error("Iltimos malumotlarni to'liq kiriting!");
 			const test = await testModel.findOne({ enterCode: testCode });
 			const student = await studentModel.findOne({ phoneNumber });
-			if (!test) throw new Error("Test mavjud emas!");
-			if (test.status !== "active") throw new Error("Testga kira olmaysiz!");
-			if (!student) throw new Error("Student mavjud emas!");
-			const isKnown = test.members.find(
-				(mbr) => mbr.studentId.toString() === student._id.toString()
+
+			if (!test) throw new Error("Test not found");
+
+			if (!student) throw new Error("Student not found");
+
+			const joinFound = student.joined_tests.find(
+				(e) => e === test._id.toString()
 			);
-			if (student.joined_tests.find((e) => e === test._id.toString()))
-				throw new Error("Siz allaqachon kirgansiz!");
-			if (isKnown && isKnown.status && isKnown.status === "finished")
-				throw new Error("Siz allaqachon");
+			const mbrFound = test.members.find(
+				(e) => e.studentId.toString() === student._id.toString()
+			);
+
+			if (mbrFound) throw new Error("You are already finished");
+			if (joinFound) throw new Error("You are already finished");
 
 			return new enterDto(test);
 		} catch (error) {
@@ -47,8 +51,8 @@ class enterService {
 			});
 			const test = await testModel.findById(comparedResult.testId);
 
-			student?.joined_tests.push(result._id.toString());
 			if (!test) throw new Error("Test topilmadi");
+			student?.joined_tests.push(test._id.toString());
 			const newMbr = {
 				phoneNumber: student?.phoneNumber,
 				studentId: result.userId,
@@ -86,7 +90,7 @@ class enterService {
 			const student = await studentModel.findById(result.userId);
 			const test = await testModel.findById(result.testId);
 			student!.joined_tests = student!.joined_tests.filter(
-				(e) => e !== (result.testId as any)
+				(e) => e !== result.testId.toString()
 			);
 			test!.members = test!.members.filter(
 				(e) => e.studentId !== result.userId
