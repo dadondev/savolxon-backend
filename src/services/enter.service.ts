@@ -90,11 +90,13 @@ class enterService {
 			const student = await studentModel.findById(result.userId);
 			const test = await testModel.findById(result.testId);
 			student!.joined_tests = student!.joined_tests.filter(
-				(e) => e !== result.testId.toString()
+				(e) => e.toString() !== result.testId.toString()
 			);
 			test!.members = test!.members.filter(
-				(e) => e.studentId !== result.userId
+				(e) => e.studentId.toString() !== result.userId.toString()
 			) as any;
+			await test?.save();
+			await student?.save();
 			return { message: "Natijalar o'chirib tashlandi!" };
 		} catch (error) {
 			throw error;
