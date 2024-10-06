@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import { jwtSecret } from "../utils/utils";
 import { getCode } from "../functions/getEnterCode";
 import smsService from "./sms.service";
+import sendMSG from "../functions/sendmsg";
 
 class teacherService {
 	async create(payload: any) {
@@ -62,14 +63,16 @@ class teacherService {
 			throw error;
 		}
 	}
-	async forgetPassword(phoneNumber: string) {
+	async forgetPassword(phoneNumber: string, telegramId: string) {
 		try {
 			const teacher = await teacherModel.findOne({ phoneNumber });
 			if (!teacher) throw new Error("O'qituvchi topilmadi!");
 			const random = getCode() + "";
 			const hashedPassword = bcrypt.hashSync(random, 10);
 			teacher.password = hashedPassword;
+			const msg = `Assalomu alaykum ${teacher.firstName}!\n\nSizning yangi parolingiz: ${random}`;
 			await teacher.save();
+			if (telegramId) await sendMSG(msg, telegramId);
 			await smsService.forgotPassword(teacher.phoneNumber, random);
 			return new teacherDto(teacher);
 		} catch (error) {

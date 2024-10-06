@@ -56,8 +56,8 @@ class teacherController {
 	}
 	async forgetPassword(req: Request, res: Response) {
 		try {
-			const { phoneNumber } = req.body;
-			const resp = await teacherService.forgetPassword(phoneNumber);
+			const { phoneNumber, telegramId } = req.body;
+			const resp = await teacherService.forgetPassword(phoneNumber, telegramId);
 			return res.json(resp);
 		} catch (error) {
 			return res.status(400).json({ message: "Parolni almashtirishda muammo" });
