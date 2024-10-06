@@ -31,7 +31,7 @@ export async function handleCode(ctx: Context, next: () => Promise<void>) {
 		});
 		if (!existResult) throw new Error("test topilmadi");
 		const resultsList = existResult
-			.filter((e) => e.solved.length === 0)
+			.filter((e) => e.solved.length !== 0)
 			.map((e) => new resultDto(e))
 			.sort((a, b) => a.wrongs - b.wrongs);
 
@@ -43,9 +43,9 @@ export async function handleCode(ctx: Context, next: () => Promise<void>) {
 				const student = await studentModel.findById(e.userId);
 				if (!student) return "";
 
-				return `\n${i + 1}. ${student.lastName} ${student.firstName} ✅${
+				return `\n${i + 1}. ${student.lastName} ${student.firstName} ✅ ${
 					e.corrects
-				} ❌${e.wrongs}`;
+				} ❌ ${e.wrongs}`;
 			})
 			.join("");
 		return ctx.reply(`Quyidagi test bo'yicha natijalar!\n${rating}`);

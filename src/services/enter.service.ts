@@ -21,10 +21,7 @@ class enterService {
 			if (!test) throw new Error("Test mavjud emas!");
 			if (test.status !== "active") throw new Error("Testga kira olmaysiz!");
 			if (!student) throw new Error("Student mavjud emas!");
-			const isKnown = test.members.find(
-				(mbr) =>
-					mbr.phoneNumber === phoneNumber && mbr.studentId === student._id
-			);
+			const isKnown = test.members.find((mbr) => mbr.studentId === student._id);
 			if (isKnown && isKnown.status && isKnown.status === "finished")
 				throw new Error("Siz allaqachon");
 
@@ -52,6 +49,7 @@ class enterService {
 				phoneNumber: student?.phoneNumber,
 				studentId: result.userId,
 				resultId: result._id,
+				status: "finished",
 			};
 			test.members.push(newMbr);
 			await test.save();
