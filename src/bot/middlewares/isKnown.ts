@@ -67,7 +67,7 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 			existUser.role = text === "👨🏻‍🏫 O'qituvchi" ? "teacher" : "student";
 			existUser.action = "role";
 			await existUser.save();
-			await saveToApp(existUser as tmeUserValidationI);
+			await saveToApp(new userDto(existUser));
 			return ctx.reply(
 				"✅ Muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!\n\n/start buyrug'ini bosing!",
 				{
@@ -102,4 +102,23 @@ function validator(user: any) {
 	if (!password) return "password";
 	if (!role) return "role";
 	return "ok";
+}
+
+class userDto {
+	firstName: string;
+	lastName: string;
+	phoneNumber: string;
+	password: string;
+	action: string;
+	telegramId: string;
+	role: string;
+	constructor(data: any) {
+		this.firstName = data.firstName;
+		this.lastName = data.lastName;
+		this.phoneNumber = data.phoneNumber;
+		this.password = data.password;
+		this.action = data.action;
+		this.telegramId = data.telegramId;
+		this.role = data.role;
+	}
 }
