@@ -13,6 +13,10 @@ const tmeUser = new mongoose.Schema({
 		unique: true,
 	},
 	role: String,
+	isAdmin: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 export default mongoose.model("tmeUser", tmeUser);

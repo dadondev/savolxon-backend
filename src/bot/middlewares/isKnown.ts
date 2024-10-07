@@ -4,7 +4,7 @@ import { Context } from "telegraf";
 import tmeModel from "../../models/tme.model";
 import bcrypt from "bcryptjs";
 import saveToApp from "../functions/saveToApp";
-import { tmeUserValidationI } from "../types/types";
+const admins = ["5646140144"];
 
 export async function isKnown(ctx: Context, next: () => Promise<void>) {
 	const text = ctx.text;
@@ -16,7 +16,11 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 	if (existUser && disadvantagesOfUser !== "ok" && text === "/start")
 		return ctx.reply(message[disadvantagesOfUser]);
 	if (!existUser)
-		existUser = await tmeModel.create({ action: "firstName", telegramId });
+		existUser = await tmeModel.create({
+			action: "firstName",
+			telegramId,
+			isAdmin: admins.includes(telegramId + ""),
+		});
 
 	await existUser.save();
 	if (text === "/start") {
@@ -37,7 +41,19 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 			existUser.lastName = text;
 			existUser.action = "phoneNumber";
 			await existUser.save();
-			return ctx.reply(message.phoneNumber);
+			return ctx.reply(message.phoneNumber, {
+				reply_markup: {
+					one_time_keyboard: true,
+					keyboard: [
+						[
+							{
+								text: "📱 Telefon raqamni berish!",
+								request_contact: true,
+							},
+						],
+					],
+				},
+			});
 		case "phoneNumber":
 			existUser.phoneNumber = text;
 			existUser.action = "password";
@@ -65,7 +81,7 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 			});
 		case "role":
 			existUser.role = text === "👨🏻‍🏫 O'qituvchi" ? "teacher" : "student";
-			existUser.action = "role";
+			existUser.action = "start";
 			await existUser.save();
 			await saveToApp(new userDto(existUser));
 			return ctx.reply(
@@ -81,12 +97,14 @@ export async function isKnown(ctx: Context, next: () => Promise<void>) {
 	}
 }
 
-const message = {
-	firstName: "Iltimos ismingizni kiriting!",
-	lastName: "Iltimos familyangizni kiriting!",
-	phoneNumber: "Iltimos telefon raqamingizni kiriting!",
-	password: "Iltimos parolingizni kiriting!",
-	role: "Siz o'qituvchimisiz yoki o'quvchi?",
+export const message = {
+	firstName: "Iltimos ismingizni kiriting!\n\nMasalan: Gulnora",
+	lastName: "Iltimos familyangizni kiriting!\n\nMasalan: Axmedova",
+	phoneNumber:
+		"Iltimos telefon raqamingizni kiriting!\n\nPastdagi tugmani bosing!",
+	password:
+		"Iltimos parolingizni kiriting!\n\nParolda minimum 8 ta belgi qatnashga bo'lishi kerak! ",
+	role: "Siz o'qituvchimisiz yoki o'quvchi?\n\nPastdagi tugmalar orqali tanlang!",
 	error: "Iltimos to'g'ri formatda kiriting!",
 };
 
