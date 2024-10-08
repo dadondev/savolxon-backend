@@ -14,6 +14,7 @@ import { savePhoneNumber } from "./functions/savePhoneNumber";
 import instroductionAction from "./actions/instroduction";
 import backAction from "./actions/back";
 import sendMsgToUsers from "./actions/sendMessageToUsers";
+import getStatistics from "./actions/statistics";
 
 const bot = new Telegraf(botToken);
 
@@ -31,5 +32,6 @@ bot.action("instroduction", instroductionAction);
 
 bot.action("back", backAction);
 bot.action("sendMessageToUsers", sendMsgToUsers);
+bot.action("statistics", getStatistics);
 
 export default bot;
